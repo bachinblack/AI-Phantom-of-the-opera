@@ -18,9 +18,9 @@ from nodes import (
 
 import display
 
-# Comment this out to disable graphic debugging
+# Set this call to False to disable graphical debugging
 # Better disable it on every push
-# display.init_debug()
+display.init_debug(False)
 
 host = "localhost"
 port = 12000

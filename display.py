@@ -5,9 +5,9 @@ from collections import defaultdict
 
 
 # This is where the debugger will live.
-def init_debug():
+def init_debug(graph: bool):
     global debugger
-    debugger = Display()
+    debugger = Display() if graph else None
 
 
 class Display():

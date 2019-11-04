@@ -1,5 +1,5 @@
 from copy import deepcopy as dcpy
-from .nodes import CharacterNode, MoveNode, compute_gain
+from .nodes import Node, CharacterNode, MoveNode, compute_gain
 
 
 class ChristineNode(CharacterNode):
