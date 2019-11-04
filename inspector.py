@@ -8,12 +8,19 @@ from logging.handlers import RotatingFileHandler
 from collections import defaultdict
 
 import protocol
+from nodes.nodes import MoveNode, CharacterNode, compute_gain
+
 from nodes import (
-    MoveNode,
-    CharacterNode,
-    RaoulNode,
+    joseph_nodes as jn,
+    raoul_nodes as rn,
+    christine_nodes as cn,
 )
-from joseph_nodes import JosephNode
+
+import display
+
+# Comment this out to disable graphic debugging
+# Better disable it on every push
+# display.init_debug()
 
 host = "localhost"
 port = 12000
@@ -74,8 +81,9 @@ class Player():
 
         # All the implemented powers
         self.characters = {
-            "red": RaoulNode,
-            "grey": JosephNode
+            "red": rn.RaoulNode,
+            "grey": jn.JosephNode,
+            "black": cn.ChristineNode,
         }
 
         self.end = False
@@ -84,12 +92,19 @@ class Player():
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def predict_round(self, options):
+        if display.debugger is not None:
+            display.debugger.update(
+                self.gamestate,
+                compute_gain(self.gamestate),
+                "Current state"
+            )
         self.predictions = []
         self.bestnode = None
 
         for id, ch in enumerate(options):
+            color = ch['color']
             # Getting the availables tiles to move to
-            routes = self.passages[ch['position']] if ch['color'] != 'pink' else self.pink_passages[ch['position']]
+            routes = self.passages[ch['position']] if color != 'pink' else self.pink_passages[ch['position']]
             # If the lock is in one of the available paths, removing this path from the list
             if ch['position'] in self.gamestate['blocked']:
                 # inspector_logger.warn(f"removing lock route {self.gamestate['blocked']}")
@@ -97,10 +112,10 @@ class Player():
             try:
                 # If the character was implemented, picking it
                 # (pink doesn't need any implementation, just the pink_paths)
-                tmp = self.characters[ch['color']](self.gamestate, ch, routes)
+                tmp = self.characters[color](self.gamestate, color, routes)
             except KeyError:
                 # Otherwise, using default CharacterNode
-                tmp = CharacterNode(self.gamestate, ch, routes)
+                tmp = CharacterNode(self.gamestate, color, routes)
             tmp.id = id
             if self.bestnode is None or abs(tmp.get_best_gain()) < abs(self.bestnode.get_best_gain()):
                 self.bestnode = tmp
@@ -108,6 +123,12 @@ class Player():
 
         inspector_logger.debug(self.predictions)
         inspector_logger.warn(self.bestnode)
+        if display.debugger is not None:
+            display.debugger.update(
+                self.gamestate,
+                self.bestnode.get_best_gain(),
+                f"Picked {str(self.bestnode)}"
+            )
 
         return self.bestnode.id
 

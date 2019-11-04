@@ -1,14 +1,13 @@
 from copy import deepcopy as dcpy
-from nodes import Node, MoveNode
+from .nodes import Node, CharacterNode, MoveNode
 
 
-class JosephNode(Node):
+class JosephNode(CharacterNode):
 
     def __repr__(self):
         return f"Joseph: {self.options} >>{self.best}<<"
 
     def __init__(self, gamestate: dict, character: dict, moves: list):
-        print("Joseph node")
         Node.__init__(self)
 
         # get character index

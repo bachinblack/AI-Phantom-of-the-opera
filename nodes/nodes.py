@@ -1,5 +1,6 @@
 from copy import deepcopy as dcpy
 from collections import defaultdict
+import display
 
 # The classes for our map of possibilities.
 # it is possible to print them to see for every champion and every move
@@ -63,8 +64,10 @@ class Node():
 
     # Function to override in move-related nodes
     def get_move_target(self):
-        print(self.__repr__())
         return self.best.get_move_target() if self.best is not None else None
+
+    def get_use_power(self):
+        return self.best.use_power() if not use_power else use_power
 
 
 # Stores an array of MoveNodes from all the available moves
@@ -74,17 +77,18 @@ class CharacterNode(Node):
     def __repr__(self):
         return f"{self.character['color']}: {self.options} >>{self.best}<<"
 
-    def __init__(self, gamestate, character, moves):
+    def __init__(self, gamestate, chcol, moves):
         Node.__init__(self)
-        self.character = character
         self.is_root = True
 
         # get character index
-        for id, c in enumerate(gamestate['characters']):
-            if c['color'] == character:
-                break
+        id, self.character = self.get_character_id(
+            gamestate['characters'],
+            chcol
+        )
 
         for m in moves:
+            print(self.__repr__())
             tmp = MoveNode(gamestate, id, m)
             # Keeping track of the closest value to 0
             if self.best is None or abs(tmp.gain) < abs(self.best.gain):
@@ -92,23 +96,11 @@ class CharacterNode(Node):
                 self.gain = abs(tmp.gain)
             self.options.append(tmp)
 
-
-# Raoul (red) gets to draw an alibi card
-class RaoulNode(CharacterNode):
-
-    def __repr__(self):
-        return f"Raoul: {self.options} >>{self.best+0.5}<<"
-
-    def __init__(self, gamestate, character, moves):
-        CharacterNode.__init__(self, gamestate, character, moves)
-        # There is a probability to get an alibi on a character
-        # Always use his power
-        self.power = 1
-
-    # Browsing for the last node and returning its value
-    def get_best_gain(self):
-        # Adding only .5 to this score, as +1 gain is not guaranted
-        return self.best.get_best_gain() + 0.5
+    def get_character_id(self, characters, chcol) -> tuple:
+        for id, c in enumerate(characters):
+            if c['color'] == chcol:
+                return (id, c)
+        return (-1, None)
 
 
 # Calculates the state of the game for a given character's new position
@@ -130,9 +122,13 @@ class MoveNode(Node):
         self.character = self.gamestate['characters'][charid]
         self.character['position'] = self.pos
         self.gain = compute_gain(self.gamestate)
-        # At equal gain, it is better to pick the one where people are grouped
-        if self.gain > 0:
-            self.gain += 0.1
+
+        if display.debugger is not None:
+            display.debugger.update(
+                self.gamestate,
+                self.gain,
+                f"{self.character['color']}->{self.__repr__()}"
+            )
 
     def get_move_target(self):
         return self.pos
