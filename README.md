@@ -6,7 +6,7 @@ Game server [here](https://github.com/nlehir/phantom_opera)
 Rules [here](http://www.hurricangames.com/datapdf/device/le-fantome-de-l-opera_rules_fr.pdf)
 
 
-Characters (check if the power has been implemented):  
+### Characters (check if the power has been implemented):  
 - [x] Raoul De Chagny
 - [x] Meg Giry
 - [ ] Ms Giry
