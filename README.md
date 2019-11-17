@@ -9,9 +9,9 @@ Rules [here](http://www.hurricangames.com/datapdf/device/le-fantome-de-l-opera_r
 Characters:  
 - [x] Raoul De Chagny
 - [x] Meg Giry
-- [] Ms Giry
+- [ ] Ms Giry
 - [x] Joseph Buquet
 - [x] Christine Daaé
-- [] Mr Moncharmin
-- [] Mr Richard
+- [ ] Mr Moncharmin
+- [ ] Mr Richard
 - [x] Le persan
