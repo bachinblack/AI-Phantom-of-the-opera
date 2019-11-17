@@ -8,12 +8,14 @@ from logging.handlers import RotatingFileHandler
 from collections import defaultdict
 
 import protocol
-from nodes.nodes import MoveNode, CharacterNode, compute_gain
+from nodes.nodes import MoveNode, compute_gain
+from nodes.character_nodes import DefaultChNode
 
 from nodes import (
     joseph_nodes as jn,
     raoul_nodes as rn,
     christine_nodes as cn,
+    persian_nodes as pn,
 )
 
 import display
@@ -84,6 +86,7 @@ class Player():
             "red": rn.RaoulNode,
             "grey": jn.JosephNode,
             "black": cn.ChristineNode,
+            "brown": pn.PersianNode,
         }
 
         self.end = False
@@ -115,7 +118,7 @@ class Player():
                 tmp = self.characters[color](self.gamestate, color, routes)
             except KeyError:
                 # Otherwise, using default CharacterNode
-                tmp = CharacterNode(self.gamestate, color, routes)
+                tmp = DefaultChNode(self.gamestate, color, routes)
             tmp.id = id
             if self.bestnode is None or abs(tmp.get_best_gain()) < abs(self.bestnode.get_best_gain()):
                 self.bestnode = tmp

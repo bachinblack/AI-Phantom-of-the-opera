@@ -1,23 +1,21 @@
 from copy import deepcopy as dcpy
-from .nodes import Node, CharacterNode, MoveNode
+from .nodes import Node, MoveNode
+from .character_nodes import CharacterNode
 
 
+# Joseph (grey) can move the blackout.
+# He will try it in every room for every room he can go.
 class JosephNode(CharacterNode):
 
     def __repr__(self):
         return f"Joseph: {self.options} >>{self.best}<<"
 
-    def __init__(self, gamestate: dict, character: dict, moves: list):
-        Node.__init__(self)
-
-        # get character index
-        for id, c in enumerate(gamestate['characters']):
-            if c['color'] == 'grey':
-                break
+    def __init__(self, gamestate: dict, chcol: str, moves: list):
+        CharacterNode.__init__(self, gamestate, chcol)
 
         # Use the power for every room
         for room in range(10):
-            tmp = BlackoutNode(gamestate, room, id, moves)
+            tmp = BlackoutNode(gamestate, room, self.id, moves)
             # Keeping track of the closest value to 0
             if self.best is None or abs(tmp.gain) < abs(self.best.gain):
                 self.best = tmp

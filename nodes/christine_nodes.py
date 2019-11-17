@@ -1,41 +1,42 @@
 from copy import deepcopy as dcpy
-from .nodes import Node, CharacterNode, MoveNode, compute_gain
+from .nodes import Node, MoveNode, compute_gain
+from .character_nodes import CharacterNode
 
 
+# Christine (black) can draw everyone in her room.
+# She will try it in every room she can go
 class ChristineNode(CharacterNode):
 
     def __repr__(self):
         return f"Christine: {self.options} >>{self.best}<<"
 
     def __init__(self, gamestate: dict, chcol: str, moves: list):
-        Node.__init__(self)
+        CharacterNode.__init__(self, gamestate, chcol)
 
-        # getting character index
-        id, _ = self.get_character_id(gamestate['characters'], chcol)
-        # for id, c in enumerate(gamestate['characters']):
-        #     if c['color'] == 'black':
-        #         break
+        # For the given room id, the available passages
+        self.passages = [
+            (1, 4), (0, 2), (1, 3), (2, 7), (0, 5, 8),
+            (4, 6), (5, 7), (3, 6, 9), (4, 9), (7, 8)
+        ]
 
         for m in moves:
             # Without power
-            tmp = MoveNode(gamestate, id, m)
+            tmp = MoveNode(gamestate, self.id, m)
             # Keeping track of the closest value to 0
             if self.best is None or abs(tmp.gain) < abs(self.gain):
                 self.best = tmp
                 self.gain = tmp.gain
             self.options.append(tmp)
 
-            # With power (need to know which rooms are accessible from new pos)
-            # tmp = ChristineMoveNode(gamestate, id, m)
-            # # Keeping track of the closest value to 0
-            # if abs(tmp.gain) < abs(self.gain):
-            #     self.best = tmp
-            #     self.gain = tmp.gain
-            # self.options.append(tmp)
+            # With power
+            tmp = ChristineMoveNode(gamestate, self.id, m, self.passages[m])
+            # Keeping track of the closest value to 0
+            if abs(tmp.gain) < abs(self.gain):
+                self.best = tmp
+                self.gain = tmp.gain
+            self.options.append(tmp)
 
 
-# Move christine to the given location, calculate gain,
-# then use power and recalculate gain
 class ChristineMoveNode(MoveNode):
 
     def __repr__(self):
@@ -49,16 +50,12 @@ class ChristineMoveNode(MoveNode):
         gamestate = None
 
         self.pos = pos
-
-        print("-----  CHR  -----")
-        print(self.pos)
+        self.character = {'color': 'Christine'}
 
         # Drawing everyone around to the given room (including christine)
         for ch in self.gamestate['characters']:
             if ch['position'] in moves:
                 ch['position'] = self.pos
-                print(ch['color'])
-
-        print("-----------------")
 
         self.gain = compute_gain(self.gamestate)
+        self.try_debug()

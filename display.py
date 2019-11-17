@@ -63,7 +63,7 @@ class Display():
             if ch['suspect']:
                 p = Circle(fpos, 20, color=ch['color'])
             else:
-                p = Rectangle(fpos, 20, 20)
+                p = Rectangle(fpos, 40, 40, color=ch['color'])
             self.ax.add_patch(p)
             dd[pos] += 1
 
