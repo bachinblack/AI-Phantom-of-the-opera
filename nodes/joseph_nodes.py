@@ -1,5 +1,6 @@
 from copy import deepcopy as dcpy
-from .nodes import Node, MoveNode
+from .nodes import Node
+from .move_node import MoveNode
 from .character_nodes import CharacterNode
 
 
@@ -12,10 +13,11 @@ class JosephNode(CharacterNode):
 
     def __init__(self, gamestate: dict, chcol: str, moves: list):
         CharacterNode.__init__(self, gamestate, chcol)
+        gamestate = None
 
         # Use the power for every room
         for room in range(10):
-            tmp = BlackoutNode(gamestate, room, self.id, moves)
+            tmp = BlackoutNode(self.gamestate, room, self.id, moves)
             # Keeping track of the closest value to 0
             if self.best is None or abs(tmp.gain) < abs(self.best.gain):
                 self.best = tmp

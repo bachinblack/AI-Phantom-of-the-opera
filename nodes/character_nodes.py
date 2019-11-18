@@ -1,17 +1,26 @@
-from .nodes import Node, MoveNode
+from copy import deepcopy as dcpy
 
+from .nodes import Node
+from .move_node import MoveNode
 
 # The abstract class "CharacterNode"
 class CharacterNode(Node):
 
-    def __init__(self, gamestate, chcol):
+    def __init__(self, gamestate, chcol: str):
         Node.__init__(self)
         self.is_root = True
 
+        self.gamestate = dcpy(gamestate)
+
         # get character index
         self.id, self.character = self.get_character_id(
-            gamestate['characters'],
+            self.gamestate['characters'],
             chcol
+        )
+
+        # Removing current character from options.
+        self.gamestate['options'].pop(
+            next(id for id, ch in enumerate(self.gamestate['options']) if ch['color'] == chcol)
         )
 
     def get_character_id(self, characters: list, chcol: str) -> tuple:
@@ -31,9 +40,13 @@ class DefaultChNode(CharacterNode):
         CharacterNode.__init__(self, gamestate, chcol)
 
         for m in moves:
-            tmp = MoveNode(gamestate, self.id, m)
+            tmp = MoveNode(self.gamestate, self.id, m)
             # Keeping track of the closest value to 0
             if self.best is None or abs(tmp.gain) < abs(self.best.gain):
                 self.best = tmp
                 self.gain = abs(tmp.gain)
             self.options.append(tmp)
+
+    def get_use_power(self):
+        # For default characters, never use power
+        return 0

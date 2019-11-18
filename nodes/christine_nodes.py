@@ -1,5 +1,6 @@
 from copy import deepcopy as dcpy
-from .nodes import Node, MoveNode, compute_gain
+from .nodes import Node
+from .move_node import MoveNode, compute_gain
 from .character_nodes import CharacterNode
 
 
@@ -21,7 +22,7 @@ class ChristineNode(CharacterNode):
 
         for m in moves:
             # Without power
-            tmp = MoveNode(gamestate, self.id, m)
+            tmp = MoveNode(self.gamestate, self.id, m)
             # Keeping track of the closest value to 0
             if self.best is None or abs(tmp.gain) < abs(self.gain):
                 self.best = tmp
@@ -29,7 +30,7 @@ class ChristineNode(CharacterNode):
             self.options.append(tmp)
 
             # With power
-            tmp = ChristineMoveNode(gamestate, self.id, m, self.passages[m])
+            tmp = ChristineMoveNode(self.gamestate, self.id, m, self.passages[m])
             # Keeping track of the closest value to 0
             if abs(tmp.gain) < abs(self.gain):
                 self.best = tmp
@@ -59,3 +60,7 @@ class ChristineMoveNode(MoveNode):
 
         self.gain = compute_gain(self.gamestate)
         self.try_debug()
+
+    def get_use_power(self):
+        # We're in a power node, so we always use the power
+        return 1

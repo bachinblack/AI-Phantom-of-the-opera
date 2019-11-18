@@ -1,5 +1,6 @@
 from copy import deepcopy as dcpy
-from .nodes import Node, MoveNode, compute_gain
+from .nodes import Node
+from .move_node import MoveNode, compute_gain
 from .character_nodes import CharacterNode
 
 
@@ -13,11 +14,11 @@ class PersianNode(CharacterNode):
     def __init__(self, gamestate: dict, chcol: str, moves: list):
         CharacterNode.__init__(self, gamestate, chcol)
 
-        targets = self.get_people_in_room(gamestate, self.character['position'])
+        targets = self.get_people_in_room(self.character['position'])
 
         for m in moves:
             # Without power
-            tmp = MoveNode(gamestate, self.id, m)
+            tmp = MoveNode(self.gamestate, self.id, m)
             # Keeping track of the closest value to 0
             if self.best is None or abs(tmp.gain) < abs(self.gain):
                 self.best = tmp
@@ -27,15 +28,15 @@ class PersianNode(CharacterNode):
             # With power
             # Trying to move with each people in the room
             for t in targets:
-                tmp = PersianMoveNode(gamestate, self.id, m, t)
+                tmp = PersianMoveNode(self.gamestate, self.id, m, t)
                 # Keeping track of the closest value to 0
                 if abs(tmp.gain) < abs(self.gain):
                     self.best = tmp
                     self.gain = tmp.gain
                 self.options.append(tmp)
 
-    def get_people_in_room(self, gamestate, room):
-        return [id for id, ch in enumerate(gamestate['characters']) if ch['position'] == room and ch['color'] != 'brown']
+    def get_people_in_room(self, room):
+        return [id for id, ch in enumerate(self.gamestate['characters']) if ch['position'] == room and ch['color'] != 'brown']
 
 
 class PersianMoveNode(MoveNode):
@@ -59,3 +60,7 @@ class PersianMoveNode(MoveNode):
 
         self.gain = compute_gain(self.gamestate)
         self.try_debug()
+
+    def get_use_power(self):
+        # We're in a power node, so we always use the power
+        return 1
