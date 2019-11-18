@@ -1,7 +1,7 @@
 #!/usr/bin/python3.6
 from player import Player
 
-class Inspector(Player):
+class Fantom(Player):
 
     def __init__(self):
         Player.__init__(self)
@@ -12,15 +12,16 @@ class Inspector(Player):
         # False: Intent to avoid it AND hide the ghost. (fantom's turn)
         # Basically, the intent depends on who will play the move.
         self.intent = {
-            4: [True, False, False, True],
-            3: [True, True, False],
-            2: [True, False],
-            1: [True]
+            4: [False, True, True, False],
+            3: [False, False, True],
+            2: [False, True],
+            1: [False]
         }
 
-        # The inspector doesn't know who the ghost is.
+        # The ghost knows who the ghost is and plays around this
         self.ghost = None
 
+
 if __name__ == "__main__":
-    p = Inspector()
+    p = Fantom()
     p.run()
