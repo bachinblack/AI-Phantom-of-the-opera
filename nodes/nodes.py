@@ -31,7 +31,7 @@ class Node():
         return self.best.get_move_target() if self.best is not None else None
 
     def get_use_power(self):
-        return self.best.use_power() if self.best is not None else 0
+        return self.best.get_use_power() if self.best is not None else 0
 
     def get_next_root_node(self):
         return self.next or self.get_next_root_node()

@@ -3,6 +3,7 @@ from copy import deepcopy as dcpy
 from .nodes import Node
 from .move_node import MoveNode
 
+
 # The abstract class "CharacterNode"
 class CharacterNode(Node):
 
@@ -34,17 +35,17 @@ class CharacterNode(Node):
 class DefaultChNode(CharacterNode):
 
     def __repr__(self):
-        return f"{self.character['color']}: {self.options} >>{self.best}<<"
+        return f"{self.character['color']}: {self.best}"
 
     def __init__(self, gamestate: object, chcol: str, moves: list):
         CharacterNode.__init__(self, gamestate, chcol)
 
         for m in moves:
             tmp = MoveNode(self.gamestate, self.id, m)
-            # Keeping track of the closest value to 0
-            if self.best is None or abs(tmp.gain) < abs(self.best.gain):
+            # Keeping track of the highest value
+            if self.best is None or tmp.gain > self.best.gain:
                 self.best = tmp
-                self.gain = abs(tmp.gain)
+                self.gain = tmp.gain
             self.options.append(tmp)
 
     def get_use_power(self):

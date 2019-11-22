@@ -6,10 +6,11 @@ from random import randrange
 import logging
 from logging.handlers import RotatingFileHandler
 from collections import defaultdict
+from time import perf_counter
 
 import protocol
 
-from nodes.move_node import compute_gain
+# from nodes.move_node import compute_gain
 from nodes.root_node import RootNode
 
 import display
@@ -50,10 +51,9 @@ class Player():
         # Update it every round
         self.gamestate = None
 
-
         self.questions = {
             "select character": self.predict_round, # Select the character that will play
-            "activate+": self.send_use_power, # Use power
+            "activate": self.send_use_power, # Use power
             "white character power move +": None, # Asking for a position for each person to displace
             "purple character power": None, # Asking for a character to bring with purple
             "grey character power": self.send_power_target, # Room to put the blackout in
@@ -71,18 +71,25 @@ class Player():
         if display.debugger is not None:
             display.debugger.update(
                 self.gamestate,
-                compute_gain(self.gamestate),
+                self.intents[1][0](self.gamestate),
                 "Current state"
             )
 
         # Adding options to gamestate to pass them on
         self.gamestate['options'] = options
+        # Adding also the queue of gain computers
+        self.gamestate['compute_gain'] = self.intents[len(options)]
 
         # Create our tree with available options
+        t_start = perf_counter()
         self.tree = RootNode(self.gamestate)
+        t_stop = perf_counter()
 
-        print(self.tree)
-        print("-------------------------------------------")
+        # print("Elapsed time:", t_stop, t_start)
+        print("Elapsed time during the whole program in seconds:",
+                                    t_stop-t_start)
+        # print(self.tree)
+        # print("-------------------------------------------")
 
         if display.debugger is not None:
             display.debugger.update(
@@ -90,6 +97,7 @@ class Player():
                 self.tree.get_best_gain(),
                 f"Picked {str(self.tree.best)}"
             )
+        print(f"Picked {str(self.tree)}")
 
         return self.tree.best.options_index
 
@@ -123,9 +131,9 @@ class Player():
             if (qt.startswith(qu)) and self.questions[qu] is not None:
                 try:
                     return self.questions[qu](data)
-                except ValueError:
+                except ValueError as e:
                     inspector_logger.warn(
-                        f"Couldn't find an answer. random answer")
+                        f"Couldn't find an answer. random answer ({e})")
                     break
         return random.randint(0, len(data)-1)
 

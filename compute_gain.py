@@ -1,0 +1,94 @@
+from collections import defaultdict
+
+
+def get_rooms_list(gamestate: dict) -> dict:
+    # The first element is the total number and the second is the number of suspects
+    tmp = defaultdict(lambda: [0, 0])
+    # Sorting characters by room (removing non-suspects)
+    for ch in gamestate['characters']:
+        tmp[ch['position']][0] += 1
+        if ch['suspect']:
+            tmp[ch['position']][1] += 1
+    return tmp
+
+
+# A 8 gain means half the suspect people will be cleared at the end of the round
+# Returns a number between 0 (bad) and 8 (good)
+def inspector_gain(gamestate) -> int:
+    total = 0
+    for room, nbs in get_rooms_list(gamestate).items():
+        if nbs[0] == 1 or room == gamestate['shadow']:
+            # isolated people are negative
+            total -= nbs[1]
+        else:
+            # grouped people are positive
+            total += nbs[1]
+    # Adding .1 if people are grouped (to pick the best in case of equality)
+    return 8 - abs(total) if total < 0 else 8 - total + .1
+
+
+# Trying to compute the ghost gain without knowing where the ghost is.
+# It will return the opposite gain from the normal function
+# Returns a number between 0 (good) and 8 (bad).
+def inspector_ghost_gain(gamestate):
+    total = 0
+    for room, nbs in get_rooms_list(gamestate).items():
+        if nbs[0] == 1 or room == gamestate['shadow']:
+            # isolated people are negative
+            total -= nbs[1]
+        else:
+            # grouped people are positive
+            total += nbs[1]
+    return abs(total) + .1 if total < 0 else total
+
+
+# Get the number of grouped and isolated people.
+# Then, subtract the number including the ghost with the other one.
+# The result will be positive if the ghost is in the biggest list.
+# Returns a number from -6 (bad) to 8 (perfect).
+def ghost_gain(gamestate) -> int:
+    isolated = 0
+    grouped = 0
+    room_list = get_rooms_list(gamestate)
+    ghost_room = room_list[gamestate['ghost']['position']]
+    # Check if the ghost is alone or in a dark room
+    is_ghost_isolated = ghost_room[0] == 1 or gamestate['ghost']['position'] == gamestate['shadow']
+
+    for id, nbs in room_list.items():
+        if nbs[0] == 1 or id == gamestate['shadow']:
+            isolated += nbs[1]
+        else:
+            grouped += nbs[1]
+
+    if is_ghost_isolated is True:
+    # Add .1 if the ghost is in the isolated list.
+        return (isolated - grouped) + 0.1
+    else:
+        return grouped - isolated
+
+
+########
+# TEST #
+########
+
+# gamestate = {
+#     'shadow': 1,
+#     'ghost': {'position': 2, 'suspect': True},
+#     'characters': [
+#         {'position': 2, 'suspect': True},
+#         {'position': 2, 'suspect': True},
+#         {'position': 2, 'suspect': True},
+#         {'position': 2, 'suspect': True},
+#         {'position': 2, 'suspect': True},
+#         {'position': 2, 'suspect': True},
+#         {'position': 2, 'suspect': True},
+#         {'position': 2, 'suspect': True}
+#     ]
+# }
+
+# print("ghost")
+# print(ghost_gain(gamestate))
+# print("inspector")
+# print(inspector_gain(gamestate))
+# print("ghost from inspector view")
+# print(inspector_ghost_gain(gamestate))

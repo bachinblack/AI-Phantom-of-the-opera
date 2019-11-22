@@ -9,7 +9,7 @@ from .character_nodes import CharacterNode
 class JosephNode(CharacterNode):
 
     def __repr__(self):
-        return f"Joseph: {self.options} >>{self.best}<<"
+        return f"Joseph: {self.best}"
 
     def __init__(self, gamestate: dict, chcol: str, moves: list):
         CharacterNode.__init__(self, gamestate, chcol)
@@ -24,11 +24,15 @@ class JosephNode(CharacterNode):
                 self.gain = tmp.gain
             self.options.append(tmp)
 
+    def get_power_target(self):
+        print("get best power target")
+        return self.best.get_power_target() if self.best is not None else None
+
 
 class BlackoutNode(Node):
 
     def __repr__(self):
-        return (f"Blackout->{self.pos}: {self.options}")
+        return (f"Blackout->{self.pos}: {self.best}")
 
     def __init__(self, gamestate: dict, room: int, charid: int, moves: list):
         Node.__init__(self)
@@ -53,4 +57,5 @@ class BlackoutNode(Node):
 
     # Function to override in power-related nodes
     def get_power_target(self):
+        print(f"Grey power target: {self.pos}")
         return self.pos

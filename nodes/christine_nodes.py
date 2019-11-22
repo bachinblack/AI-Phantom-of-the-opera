@@ -9,7 +9,7 @@ from .character_nodes import CharacterNode
 class ChristineNode(CharacterNode):
 
     def __repr__(self):
-        return f"Christine: {self.options} >>{self.best}<<"
+        return f"Christine: {self.best}"
 
     def __init__(self, gamestate: dict, chcol: str, moves: list):
         CharacterNode.__init__(self, gamestate, chcol)
