@@ -81,13 +81,14 @@ class Player():
         self.gamestate['compute_gain'] = self.intents[len(options)]
 
         # Create our tree with available options
-        t_start = perf_counter()
+        # t_start = perf_counter()
         self.tree = RootNode(self.gamestate)
-        t_stop = perf_counter()
+        # print(self.tree.get_best_gain())
+        # t_stop = perf_counter()
 
         # print("Elapsed time:", t_stop, t_start)
-        print("Elapsed time during the whole program in seconds:",
-                                    t_stop-t_start)
+        # print("Elapsed time during the whole program in seconds:",
+        #                             t_stop-t_start)
         # print(self.tree)
         # print("-------------------------------------------")
 

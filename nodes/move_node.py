@@ -60,6 +60,9 @@ class MoveNode(Node):
         if len(self.gamestate['options']) > 0:
             self.next = self.gamestate['root_node'](self.gamestate)
 
+    def get_best_gain(self):
+        return self.next.get_best_gain() if self.next is not None else self.gain
+
     def try_debug(self):
         # if display.debugger is not None:
         #     display.debugger.update(
