@@ -12,9 +12,7 @@ def get_rooms_list(gamestate: dict) -> dict:
     return tmp
 
 
-# A 8 gain means half the suspect people will be cleared at the end of the round
-# Returns a number between 0 (bad) and 8 (good)
-def inspector_gain(gamestate) -> int:
+def get_groups_total(gamestate):
     total = 0
     for room, nbs in get_rooms_list(gamestate).items():
         if nbs[0] == 1 or room == gamestate['shadow']:
@@ -23,7 +21,14 @@ def inspector_gain(gamestate) -> int:
         else:
             # grouped people are positive
             total += nbs[1]
-    # Adding .1 if people are grouped (to pick the best in case of equality)
+    return total
+
+
+# A 8 gain means half the suspect people will be cleared at the end of the round.
+# Returns a number between 0 (bad) and 8 (good)
+def inspector_gain(gamestate):
+    total = get_groups_total(gamestate)
+    # Adding .1 if most people are grouped.
     return 8 - abs(total) if total < 0 else 8 - total + .1
 
 
@@ -31,14 +36,8 @@ def inspector_gain(gamestate) -> int:
 # It will return the opposite gain from the normal function
 # Returns a number between 0 (good) and 8 (bad).
 def inspector_ghost_gain(gamestate):
-    total = 0
-    for room, nbs in get_rooms_list(gamestate).items():
-        if nbs[0] == 1 or room == gamestate['shadow']:
-            # isolated people are negative
-            total -= nbs[1]
-        else:
-            # grouped people are positive
-            total += nbs[1]
+    total = get_groups_total(gamestate)
+    # Adding .1 if most people are isolated.
     return abs(total) + .1 if total < 0 else total
 
 
