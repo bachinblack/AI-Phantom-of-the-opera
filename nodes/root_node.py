@@ -2,10 +2,10 @@
 from .character_nodes import DefaultChNode
 from nodes import (
     nodes,
-    # joseph_nodes as jn,
-    # raoul_nodes as rn,
-    # christine_nodes as cn,
-    # persian_nodes as pn,
+    joseph_nodes as jn,
+    raoul_nodes as rn,
+    christine_nodes as cn,
+    persian_nodes as pn,
 )
 
 
@@ -42,10 +42,10 @@ class RootNode(nodes.Node):
         self.best = None
         # All the implemented powers
         self.characters = {
-            # "red": rn.RaoulNode,
-            # "grey": jn.JosephNode,
-            # "black": cn.ChristineNode,
-            # "brown": pn.PersianNode,
+            "red": rn.RaoulNode,
+            "grey": jn.JosephNode,
+            "black": cn.ChristineNode,
+            "brown": pn.PersianNode,
         }
 
         for id, ch in enumerate(gamestate['options']):

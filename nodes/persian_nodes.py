@@ -1,6 +1,6 @@
 from copy import deepcopy as dcpy
 from .nodes import Node
-from .move_node import MoveNode, compute_gain
+from .move_node import MoveNode
 from .character_nodes import CharacterNode
 
 
@@ -19,10 +19,7 @@ class PersianNode(CharacterNode):
         for m in moves:
             # Without power
             tmp = MoveNode(self.gamestate, self.id, m)
-            # Keeping track of the closest value to 0
-            if self.best is None or abs(tmp.gain) < abs(self.gain):
-                self.best = tmp
-                self.gain = tmp.gain
+            self.update_best_node(tmp)
             self.options.append(tmp)
 
             # With power
@@ -58,7 +55,7 @@ class PersianMoveNode(MoveNode):
         self.gamestate['characters'][charid]['position'] = pos
         self.gamestate['characters'][targetid]['position'] = pos
 
-        self.gain = compute_gain(self.gamestate)
+        self.gain = self.gamestate['compute_gain'].pop(0)(self.gamestate)
         self.try_debug()
 
     def get_use_power(self):

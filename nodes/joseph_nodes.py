@@ -18,10 +18,7 @@ class JosephNode(CharacterNode):
         # Use the power for every room
         for room in range(10):
             tmp = BlackoutNode(self.gamestate, room, self.id, moves)
-            # Keeping track of the closest value to 0
-            if self.best is None or abs(tmp.gain) < abs(self.best.gain):
-                self.best = tmp
-                self.gain = tmp.gain
+            self.update_best_node(tmp)
             self.options.append(tmp)
 
     def get_power_target(self):
@@ -49,11 +46,14 @@ class BlackoutNode(Node):
         # Check every possible move
         for m in moves:
             tmp = MoveNode(self.gamestate, charid, m)
-            # Keeping track of the closest value to 0
-            if self.best is None or abs(tmp.gain) < abs(self.best.gain):
-                self.best = tmp
-                self.gain = tmp.gain
+            self.update_best_node(tmp)
             self.options.append(tmp)
+
+    # Keeping track of the highest value
+    def update_best_node(self, tmp):
+        if self.best is None or tmp.gain > self.best.gain:
+            self.best = tmp
+            self.gain = tmp.gain
 
     # Function to override in power-related nodes
     def get_power_target(self):

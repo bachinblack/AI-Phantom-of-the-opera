@@ -56,17 +56,18 @@ class MoveNode(Node):
         self.character['position'] = self.pos
         self.gain = self.gamestate['compute_gain'].pop(0)(self.gamestate)
 
-        # self.try_debug()
+        self.try_debug()
         if len(self.gamestate['options']) > 0:
             self.next = self.gamestate['root_node'](self.gamestate)
 
     def try_debug(self):
-        if display.debugger is not None:
-            display.debugger.update(
-                self.gamestate,
-                self.gain,
-                f"{self.character['color']}->{self.__repr__()}"
-            )
+        # if display.debugger is not None:
+        #     display.debugger.update(
+        #         self.gamestate,
+        #         self.gain,
+        #         f"{self.character['color']}->{self.__repr__()}"
+        #     )
+        pass
 
     def get_move_target(self):
         return self.pos
