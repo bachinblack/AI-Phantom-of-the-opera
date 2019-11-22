@@ -5,6 +5,7 @@ Game server [here](https://github.com/nlehir/phantom_opera)
 
 Rules [here](http://www.hurricangames.com/datapdf/device/le-fantome-de-l-opera_rules_fr.pdf)
 
+Strategy [here](https://github.com/bachinblack/AI-Phantom-of-the-opera/blob/master/Phantom%20of%20the%20opera.pdf)
 
 ### Characters (check if the power has been implemented):  
 - [x] Raoul De Chagny
