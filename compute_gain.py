@@ -1,13 +1,16 @@
 from collections import defaultdict
 
 
+# Return value: list of tuples.
+# The first element is the total number and the second is the number of suspects
 def get_rooms_list(gamestate: dict) -> dict:
-    # The first element is the total number and the second is the number of suspects
     tmp = defaultdict(lambda: [0, 0])
-    # Sorting characters by room (removing non-suspects)
+
     for ch in gamestate['characters']:
+        # Get a count of everyone.
         tmp[ch['position']][0] += 1
-        if ch['suspect']:
+        if ch['suspect'] is True:
+            # Get only the count of suspects.
             tmp[ch['position']][1] += 1
     return tmp
 
@@ -60,7 +63,7 @@ def ghost_gain(gamestate) -> int:
             grouped += nbs[1]
 
     if is_ghost_isolated is True:
-    # Add .1 if the ghost is in the isolated list.
+        # Add .1 if the ghost is in the isolated list.
         return (isolated - grouped) + 0.1
     else:
         return grouped - isolated
@@ -71,20 +74,23 @@ def ghost_gain(gamestate) -> int:
 ########
 
 # gamestate = {
-#     'shadow': 1,
+#     'shadow': 3,
 #     'ghost': {'position': 2, 'suspect': True},
 #     'characters': [
-#         {'position': 2, 'suspect': True},
-#         {'position': 2, 'suspect': True},
-#         {'position': 2, 'suspect': True},
-#         {'position': 2, 'suspect': True},
-#         {'position': 2, 'suspect': True},
-#         {'position': 2, 'suspect': True},
-#         {'position': 2, 'suspect': True},
-#         {'position': 2, 'suspect': True}
+#         {'position': 2, 'suspect': False},
+#         {'position': 2, 'suspect': False},
+#         {'position': 2, 'suspect': False},
+#         {'position': 5, 'suspect': False},
+#         {'position': 5, 'suspect': False},
+#         {'position': 3, 'suspect': True},
+#         {'position': 5, 'suspect': True},
+#         {'position': 5, 'suspect': True}
 #     ]
 # }
 
+# print("room list")
+# print(get_rooms_list(gamestate))
+# print(get_groups_total(gamestate))
 # print("ghost")
 # print(ghost_gain(gamestate))
 # print("inspector")
