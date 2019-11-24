@@ -72,7 +72,7 @@ class Player():
             display.debugger.update(
                 self.gamestate,
                 self.intents[1][0](self.gamestate),
-                "Current state"
+                f"Current state ({[opt['color'] for opt in options]})"
             )
 
         # Adding options to gamestate to pass them on
