@@ -37,7 +37,7 @@ class ChristineNode(CharacterNode):
 class ChristineMoveNode(MoveNode):
 
     def __repr__(self):
-        return (f"ChristineMove->{self.pos}: {self.gain}")
+        return f"{MoveNode.__repr__(self)} (power)"
 
     def __init__(self, gamestate: dict, charid: int, pos: int, moves: list):
         Node.__init__(self)
@@ -56,6 +56,9 @@ class ChristineMoveNode(MoveNode):
 
         self.gain = self.gamestate['compute_gain'].pop(0)(self.gamestate)
         self.try_debug()
+
+        if len(self.gamestate['options']) > 0:
+            self.next = self.gamestate['root_node'](self.gamestate)
 
     def get_use_power(self):
         # We're in a power node, so we always use the power

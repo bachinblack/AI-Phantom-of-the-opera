@@ -67,6 +67,8 @@ class Display():
             self.ax.add_patch(p)
             dd[pos] += 1
 
+        self.ax.add_patch(Circle((80 * (gamestate['position_carlotta']-1), 875), 25, color="pink"))
+
         # Displaying text (gain, shadow, lock and note)
         plt.text(5, -15, "Gain = " + str(gain))
         plt.text(5, -35, "Shadow = " + str(gamestate['shadow']))
