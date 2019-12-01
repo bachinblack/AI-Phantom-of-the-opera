@@ -3,7 +3,6 @@ from copy import deepcopy as dcpy
 from collections import defaultdict
 
 from .nodes import Node
-# from .root_node import RootNode
 import display
 
 

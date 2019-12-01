@@ -23,7 +23,6 @@ class Inspector(Player):
         Player.__init__(self)
 
 
-
 if __name__ == "__main__":
     p = Inspector()
     p.run()

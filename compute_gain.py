@@ -49,12 +49,18 @@ def inspector_ghost_gain(gamestate):
 # The result will be positive if the ghost is in the biggest list.
 # Returns a number from -6 (bad) to 8 (perfect).
 def ghost_gain(gamestate) -> int:
+    # Little safecheck in case we don't have the ghost pos.
+    if 'fantom' not in gamestate:
+        return inspector_ghost_gain(gamestate)
+    # Get ghost given its color.
+    ghost = next((item for item in gamestate['characters'] if item["color"] == gamestate['fantom']), None)
+
     isolated = 0
     grouped = 0
     room_list = get_rooms_list(gamestate)
-    ghost_room = room_list[gamestate['ghost']['position']]
+    ghost_room = room_list[ghost['position']]
     # Check if the ghost is alone or in a dark room
-    is_ghost_isolated = ghost_room[0] == 1 or gamestate['ghost']['position'] == gamestate['shadow']
+    is_ghost_isolated = ghost_room[0] == 1 or ghost['position'] == gamestate['shadow']
 
     for id, nbs in room_list.items():
         if nbs[0] == 1 or id == gamestate['shadow']:
@@ -75,7 +81,7 @@ def ghost_gain(gamestate) -> int:
 
 # gamestate = {
 #     'shadow': 3,
-#     'ghost': {'position': 2, 'suspect': True},
+#     'fantom': 'blue',
 #     'characters': [
 #         {'position': 2, 'suspect': False},
 #         {'position': 2, 'suspect': False},
